@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="380" viewBox="0 0 1280 380" role="img" aria-label="Indexador — o buscador de comandos do seu Segundo Cérebro">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c4b5fd"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.18" cy="0.15" r="0.9">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.28"/>
+      <stop offset="0.55" stop-color="#8b5cf6" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#10131a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.4" r="1.4" fill="#1d2230"/>
+    </pattern>
+    <clipPath id="round"><rect x="0" y="0" width="1280" height="380" rx="22"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#round)">
+    <rect x="0" y="0" width="1280" height="380" fill="#10131a"/>
+    <rect x="0" y="0" width="1280" height="380" fill="url(#dots)"/>
+    <rect x="0" y="0" width="1280" height="380" fill="url(#glow)"/>
+
+    <!-- marca dágua: lupa -->
+    <text x="1190" y="120" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="150" fill="#c4b5fd" opacity="0.07" text-anchor="middle">⌕</text>
+
+    <!-- coluna esquerda: wordmark -->
+    <text x="64" y="96" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" letter-spacing="4" fill="#9ba3bb">S E G U N D O   C É R E B R O</text>
+    <text x="60" y="208" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-weight="800" font-size="96" fill="url(#grad)">Indexador</text>
+    <text x="64" y="262" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="21" fill="#d7dbea">O buscador de comandos do seu vault Markdown.</text>
+    <text x="64" y="318" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="19"><tspan fill="#a78bfa">busca&gt;</tspan><tspan fill="#f1f3fb"> zfs</tspan><tspan fill="#8b5cf6"> ▊</tspan></text>
+
+    <!-- coluna direita: janela de terminal -->
+    <g>
+      <rect x="760" y="72" width="400" height="240" rx="14" fill="#191d28" stroke="#30374c" stroke-width="1.5"/>
+      <circle cx="788" cy="100" r="6" fill="#ef4444" opacity="0.85"/>
+      <circle cx="810" cy="100" r="6" fill="#eab308" opacity="0.85"/>
+      <circle cx="832" cy="100" r="6" fill="#22c55e" opacity="0.85"/>
+      <text x="852" y="105" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#7d879f">indexador-cli</text>
+
+      <text x="786" y="140" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" fill="#93a0bd"><tspan fill="#a78bfa">$</tspan> docker run --rm -it</text>
+      <text x="798" y="162" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" fill="#93a0bd">-v ~/Index:/vault:ro \</text>
+      <text x="798" y="184" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5" fill="#d7dbea">ghcr.io/<tspan fill="#c4b5fd">nerdsouza</tspan>/indexador-cli</text>
+
+      <text x="786" y="224" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5"><tspan fill="#a78bfa">busca&gt;</tspan><tspan fill="#f1f3fb"> zpool status</tspan></text>
+      <text x="786" y="248" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5"><tspan fill="#c4b5fd">#1</tspan><tspan fill="#f1f3fb">  zpool status</tspan><tspan fill="#7d879f">   ← pool ZFS</tspan></text>
+      <text x="786" y="270" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13.5"><tspan fill="#c4b5fd">✓</tspan><tspan fill="#9ba3bb"> copiado para a área de transferência</tspan></text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="440" viewBox="0 0 1160 440" role="img" aria-label="Arquitetura: o vault alimenta um motor único compartilhado pela CLI e pela web">
+  <defs>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+    <clipPath id="round2"><rect x="0" y="0" width="1160" height="440" rx="18"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#round2)">
+    <rect x="0" y="0" width="1160" height="440" fill="#10131a"/>
+
+    <!-- esquerda: vault -->
+    <rect x="36" y="165" width="280" height="140" rx="14" fill="#191d28" stroke="#30374c" stroke-width="1.5"/>
+    <text x="176" y="215" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="26" fill="#c4b5fd">Index/</text>
+    <text x="176" y="248" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="15" fill="#d7dbea">vault Markdown</text>
+    <text x="176" y="272" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="13" fill="#9ba3bb">comandos que você já escreveu</text>
+
+    <!-- centro: motor -->
+    <rect x="416" y="140" width="300" height="190" rx="14" fill="#191d28" stroke="url(#accentGrad)" stroke-width="2.5"/>
+    <text x="566" y="200" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="19" fill="#f1f3fb">lib/indexador.py</text>
+    <text x="566" y="228" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="14" fill="#a78bfa">motor único</text>
+    <text x="566" y="258" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="12.5" fill="#9ba3bb">parse · busca · ranking</text>
+    <text x="566" y="280" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="12.5" fill="#9ba3bb">fuzzy · sinônimos · stem match</text>
+
+    <!-- direita: clientes -->
+    <rect x="856" y="72" width="268" height="120" rx="14" fill="#191d28" stroke="#30374c" stroke-width="1.5"/>
+    <text x="990" y="118" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#f1f3fb">REPL · indexador-cli</text>
+    <text x="990" y="144" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="13" fill="#9ba3bb">terminal interativo, ~74 MB,</text>
+    <text x="990" y="164" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="13" fill="#9ba3bb">ghcr.io/nerdsouza/indexador-cli</text>
+
+    <rect x="856" y="248" width="268" height="120" rx="14" fill="#191d28" stroke="#30374c" stroke-width="1.5"/>
+    <text x="990" y="294" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="17" fill="#f1f3fb">Web · indexador</text>
+    <text x="990" y="320" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="13" fill="#9ba3bb">FastAPI + interface, porta 8000,</text>
+    <text x="990" y="340" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="13" fill="#9ba3bb">ghcr.io/nerdsouza/indexador</text>
+
+    <!-- setas -->
+    <line x1="316" y1="235" x2="412" y2="235" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="716" y1="225" x2="852" y2="140" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="716" y1="245" x2="852" y2="300" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- rodapé -->
+    <text x="580" y="415" text-anchor="middle" font-family="system-ui,-apple-system,'Segoe UI',sans-serif" font-size="14" fill="#7d879f">Dois clientes, um motor: busque no terminal ou na web — o resultado é o mesmo.</text>
+  </g>
+</svg>
