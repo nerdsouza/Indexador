@@ -1,0 +1,21 @@
+services:
+  indexador:
+    build:
+      context: .
+      args:
+        APP_VERSION: ${APP_VERSION:-dev}
+    # A tag vem da variável APP_VERSION, que o .env carrega. O VERSION é a
+    # fonte da verdade no git; o .env espelha (por isso o .env.example traz APP_VERSION).
+    # Manter as duas em sincronia é manual — de propósito, para que a tag
+    # da imagem seja sempre explícita e auditável, nunca implícita.
+    image: ghcr.io/nerdsouza/indexador:${APP_VERSION:-dev}
+    container_name: indexador
+    restart: unless-stopped
+    environment:
+      INDEX_PATH: /vault
+      STATIC_DIR: /app/static
+      PORT: ${PORT:-8000}
+    volumes:
+      - ${INDEX_PATH}:/vault:ro
+    ports:
+      - 127.0.0.1:${PORT:-8000}:8000

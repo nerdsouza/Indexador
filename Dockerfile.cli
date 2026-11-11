@@ -1,0 +1,24 @@
+# Imagem CLI Leve do Indexador — só Python + REPL (busca_index.py).
+# Sem FastAPI, sem uvicorn, sem pyperclip: o container é descartável e
+# enxuto (~50 MB). O vault entra como volume read-only em /vault.
+FROM python:3.14-alpine
+
+WORKDIR /app
+
+# A versão vem do arquivo VERSION no build — fonte única de verdade.
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
+COPY lib/ ./lib/
+COPY busca_index.py VERSION ./
+
+ENV INDEX_PATH=/vault
+
+# O REPL só lê o vault; não precisa de privilégios de root.
+RUN addgroup -S app && adduser -S -G app app
+USER app
+
+# Sem EXPOSE: não é servidor. Uso:
+#   docker run --rm -it -v ~/cerebro-vault/Index:/vault:ro indexador-cli:3.2.0
+# ou simplesmente ./buscador-cli (faz pull/build automático).
+CMD ["python", "busca_index.py"]

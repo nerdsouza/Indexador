@@ -1,0 +1,46 @@
+# Indexador — Compose do CLIENTE (uso diário).
+#
+# Só `image:` — NENHUM build acontece aqui. Para uso diário, para instalar
+# em outra máquina sua ou para servir a alguém:
+#
+#   curl -sO https://raw.githubusercontent.com/nerdsouza/indexador/main/docker-compose.client.yml
+#   docker compose -f docker-compose.client.yml up -d
+#
+# Quem quiser mexer no código usa o docker-compose.yml (dev, com `build:`).
+#
+# Requisitos no host:
+#   - Docker e Docker Compose v2
+#   - O vault sincronizado (Syncthing) com o Index/ em ~/cerebro-vault/Index
+#     — ou aponte INDEX_PATH para outro lugar (ver .env ou variável abaixo).
+#
+# Variáveis (opcionais, no .env ao lado ou no ambiente):
+#   APP_VERSION   tag das imagens        (default: 3.2.0)
+#   PORT          porta HTTP do web      (default: 8000, bind em 127.0.0.1)
+#   INDEX_PATH    caminho do Index/      (default: ${HOME}/cerebro-vault/Index)
+
+services:
+  # Web — interface e API em 127.0.0.1:${PORT}
+  indexador:
+    image: ghcr.io/nerdsouza/indexador:${APP_VERSION:-3.2.0}
+    container_name: indexador
+    restart: unless-stopped
+    environment:
+      INDEX_PATH: /vault
+      STATIC_DIR: /app/static
+      PORT: ${PORT:-8000}
+    volumes:
+      - ${INDEX_PATH:-${HOME}/cerebro-vault/Index}:/vault:ro
+    ports:
+      - 127.0.0.1:${PORT:-8000}:${PORT:-8000}
+
+  # CLI — REPL no terminal, sob demanda (não sobe com `up -d`).
+  # Uso:  docker compose -f docker-compose.client.yml run --rm cli
+  cli:
+    image: ghcr.io/nerdsouza/indexador-cli:${APP_VERSION:-3.2.0}
+    profiles: ["cli"]
+    stdin_open: true
+    tty: true
+    environment:
+      INDEX_PATH: /vault
+    volumes:
+      - ${INDEX_PATH:-${HOME}/cerebro-vault/Index}:/vault:ro

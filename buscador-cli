@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# buscador-cli — REPL de busca de comandos do Index num container leve.
+#
+# O que faz, em ordem:
+#   1. Procura a imagem local `indexador-cli:<VERSION>` (VERSION lido do repo).
+#   2. Se não existir, tenta pull do registry (ghcr.io).
+#   3. Se o pull falhar/não existir, builda a partir de ~/dev/indexador.
+#   4. Sobe o container interativo, com o Index/ do host montado em /vault (ro).
+#
+# Variáveis de ambiente (opcionais):
+#   INDEX_PATH      caminho do Index (default: ~/cerebro-vault/Index)
+#   INDEXADOR_REPO  caminho do repo (default: ~/dev/indexador)
+#   REGISTRY_IMAGE  imagem de onde puxar (default: ghcr.io/nerdsouza/indexador-cli)
+set -euo pipefail
+
+REPO="${INDEXADOR_REPO:-$HOME/dev/indexador}"
+VAULT_INDEX="${INDEX_PATH:-$HOME/cerebro-vault/Index}"
+VERSION="$(cat "$REPO/VERSION" 2>/dev/null || echo dev)"
+IMAGE="indexador-cli:$VERSION"
+REGISTRY_IMAGE="${REGISTRY_IMAGE:-ghcr.io/nerdsouza/indexador-cli:$VERSION}"
+
+if [ ! -d "$VAULT_INDEX" ]; then
+  echo "erro: Index não encontrado em $VAULT_INDEX" >&2
+  exit 1
+fi
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "Imagem $IMAGE não encontrada localmente."
+  if docker pull "$REGISTRY_IMAGE" 2>/dev/null; then
+    docker tag "$REGISTRY_IMAGE" "$IMAGE"
+  elif [ -f "$REPO/Dockerfile.cli" ]; then
+    echo "Pull indisponível. Buildando a partir de $REPO..."
+    docker build -f "$REPO/Dockerfile.cli" -t "$IMAGE" "$REPO"
+  else
+    echo "erro: sem imagem local, pull falhou e $REPO não tem Dockerfile.cli" >&2
+    exit 1
+  fi
+fi
+
+# -it só quando há terminal; em pipe (scripts/testes) cai para -i.
+FLAGS="-i"
+if [ -t 0 ] && [ -t 1 ]; then
+  FLAGS="-it"
+fi
+
+exec docker run --rm $FLAGS \
+  --name buscador-cli \
+  -e INDEX_PATH=/vault \
+  -v "$VAULT_INDEX:/vault:ro" \
+  "$IMAGE"

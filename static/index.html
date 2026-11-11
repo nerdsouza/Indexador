@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Busca-Index</title>
+<style>
+:root{--bg:#10131a;--surface:#191d28;--surface-2:#202536;--fg:#f1f3fb;--fg-dim:#9ba3bb;--accent:#a78bfa;--accent-strong:#8b5cf6;--accent-soft:rgba(139,92,246,.25);--border:#30374c;--shadow:rgba(0,0,0,.28);--radius:14px;--font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono","Fira Code","SF Mono",Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(circle at 50% -15%,rgba(139,92,246,.20),transparent 38%),var(--bg);color:var(--fg);font-family:var(--font);line-height:1.35;padding:2rem 1rem 3rem;max-width:1000px;margin:auto;animation:fade-in .45s ease;overflow-x:hidden}
+body::before{content:"indexador";position:fixed;z-index:-1;left:50%;top:42%;transform:translate(-50%,-50%);font-size:clamp(7rem,22vw,18rem);font-weight:900;letter-spacing:-.09em;white-space:nowrap;color:rgba(167,139,250,.09);filter:blur(18px);pointer-events:none;user-select:none}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:1.8rem;font-weight:850;letter-spacing:-.04em;margin-bottom:.2rem;background:linear-gradient(135deg,#c4b5fd,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 0 25px rgba(139,92,246,.25)}
+.subtitle{color:var(--fg-dim);font-size:.92rem;margin-bottom:1.2rem}
+form{display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;position:sticky;top:.5rem;z-index:10;background:rgba(16,19,26,.9);backdrop-filter:blur(14px);padding:.6rem .8rem;border-radius:var(--radius);border:1px solid var(--border);box-shadow:0 10px 30px var(--shadow)}
+input[type="text"]{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);color:var(--fg);padding:.72rem 1rem;border-radius:10px;font-size:1rem;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 22px var(--accent-soft)}
+button{font-family:inherit}
+.search-btn{background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;border:1px solid rgba(255,255,255,.12);padding:.72rem 1rem;border-radius:10px;font-weight:750;cursor:pointer;transition:transform .08s ease,box-shadow .2s ease;font-size:.95rem}
+.search-btn:hover{transform:translateY(-1px);box-shadow:0 0 25px rgba(139,92,246,.5)}
+.search-btn:active{transform:translateY(0)}
+.group{margin-bottom:1.15rem;border:1px solid var(--border);border-radius:var(--radius);background:rgba(25,29,40,.92);overflow:hidden;box-shadow:0 5px 24px var(--shadow),0 0 20px rgba(139,92,246,.08);transition:box-shadow .2s ease,border-color .2s ease}
+.group:hover{border-color:#4a4268}
+.group-header{width:100%;padding:.9rem 1rem;background:linear-gradient(180deg,rgba(40,44,64,.72),rgba(25,29,40,.9));cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;user-select:none;border:0;color:inherit;text-align:left;transition:background .2s ease}
+.group-header:hover{background:linear-gradient(180deg,rgba(55,46,85,.78),rgba(31,28,52,.94))}
+.group-title{font-size:1.05rem;font-weight:720;word-break:break-word}
+.group-meta{color:var(--fg-dim);font-size:.78rem;white-space:nowrap;flex-shrink:0;margin-left:.5rem}
+.chevron{width:20px;height:20px;transition:transform .25s ease;flex-shrink:0;color:var(--accent)}
+.chevron[open]{transform:rotate(90deg)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.7rem;padding:1rem;animation:fade-in .25s ease}
+.items.collapsed{display:none}
+.item{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;position:relative;transition:transform .08s ease,border-color .15s,box-shadow .15s;display:flex;flex-direction:column;gap:.35rem}
+.item:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 0 18px var(--accent-soft)}
+.item .cmd{font-family:var(--mono);font-size:.85rem;color:#e4e7f2;word-break:break-word;line-height:1.35}
+.item .comment{font-size:.82rem;color:var(--fg-dim);font-style:italic;word-break:break-word}
+.item .example{font-size:.78rem;color:#7d879f;word-break:break-word;margin-top:.15rem;padding-left:.1rem;border-left:2px solid var(--border)}
+.item .example code{font-size:.95em;color:#93a0bd}
+.tabs{display:flex;gap:.35rem;margin-bottom:1rem;background:rgba(16,19,26,.7);padding:.3rem;border-radius:12px;border:1px solid var(--border);width:fit-content}
+.tab{background:transparent;border:0;color:var(--fg-dim);font-family:inherit;font-size:.9rem;font-weight:650;padding:.5rem 1.05rem;border-radius:9px;cursor:pointer;transition:background .18s,color .18s}
+.tab:hover{color:var(--fg)}
+.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;box-shadow:0 0 16px var(--accent-soft)}
+.tab-panel.hidden{display:none}
+.explain-head{background:rgba(25,29,40,.92);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem;box-shadow:0 5px 24px var(--shadow)}
+.explain-base{font-family:var(--mono);font-size:1rem;color:var(--accent);font-weight:700;margin-bottom:.2rem;word-break:break-all}
+.explain-orig{font-family:var(--mono);font-size:.8rem;color:var(--fg-dim);word-break:break-all;padding-top:.5rem;border-top:1px solid rgba(255,255,255,.07)}
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.6rem}
+.part{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:.7rem .85rem;display:flex;gap:.7rem;align-items:flex-start}
+.part.unknown{border-style:dashed;opacity:.72}
+.part .flag{font-family:var(--mono);font-size:.82rem;color:#c4b5fd;font-weight:700;flex-shrink:0;min-width:2.6rem}
+.part.unknown .flag{color:#7d879f}
+.part .desc{font-size:.83rem;color:#d7dbea;line-height:1.4}
+.part.unknown .desc{color:#7d879f;font-style:italic;font-size:.78rem}
+.item .label{font-size:.72rem;color:var(--accent);font-weight:750;text-transform:uppercase;letter-spacing:.04em}
+.item-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.35rem;padding-top:.4rem;border-top:1px solid rgba(255,255,255,.07)}
+.item-footer .section{font-size:.75rem;color:var(--fg-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:rgba(139,92,246,.18);color:#c4b5fd;border:1px solid rgba(167,139,250,.35);padding:.28rem .62rem;border-radius:7px;font-size:.78rem;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s;display:inline-flex;align-items:center;gap:.3rem;flex-shrink:0}
+.copy-btn:hover{background:rgba(139,92,246,.32);border-color:var(--accent);box-shadow:0 0 14px var(--accent-soft)}
+.copy-btn.copied{background:var(--accent);color:#171126;border-color:#d8ccff}
+.copy-btn.failed{background:rgba(239,68,68,.18);color:#fca5a5;border-color:#ef4444}
+.notice{color:#c4b5fd;font-size:.82rem;margin-bottom:.8rem}
+.result-empty{padding:1.8rem;color:var(--fg-dim);text-align:center;font-size:1rem;background:rgba(25,29,40,.7);border:1px solid var(--border);border-radius:var(--radius)}
+.footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--fg-dim);font-size:.78rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.help{margin-top:1.5rem;padding:1rem;background:rgba(25,29,40,.78);border:1px solid var(--border);border-radius:var(--radius);font-size:.85rem;color:var(--fg-dim);line-height:1.6}
+.help strong{color:var(--fg)}
+code{font-family:var(--mono);color:#c4b5fd}
+@media(max-width:640px){body{padding:1rem .6rem 2rem}h1{font-size:1.35rem}.items{grid-template-columns:1fr}.group-header{padding:.72rem .8rem}.item{padding:.72rem .8rem}.group-title{font-size:.95rem}}
+</style>
+</head>
+<body>
+<h1>Busca-Index</h1>
+<p class="subtitle">Busca no segundo cérebro — <span id="total">0</span> comandos / <span id="files">0</span> arquivos</p>
+<nav class="tabs" role="tablist" aria-label="Seções">
+  <button class="tab active" data-tab="busca" role="tab" aria-selected="true">Buscar</button>
+  <button class="tab" data-tab="entender" role="tab" aria-selected="false">Entender</button>
+</nav>
+
+<section id="tab-busca" class="tab-panel" role="tabpanel">
+<form id="searchForm" aria-label="Busca">
+  <input id="q" type="text" placeholder="buscar>" autocomplete="off" aria-label="Comando ou palavra-chave" />
+  <button class="search-btn" type="submit">Buscar</button>
+</form>
+<div id="results" aria-live="polite"></div>
+<section class="help" aria-label="Como usar">
+  <strong>Como usar:</strong> digite palavra-chave (AND, sinônimos e correção de acento) ou <code>/comando</code>. Resultados são ordenados por proximidade e separados por arquivo, sem limite de quantidade. Clique no título para expandir ou recolher; o botão 📋 copia somente o comando.
+</section>
+</section>
+
+<section id="tab-entender" class="tab-panel hidden" role="tabpanel">
+<form id="explainForm" aria-label="Explicar comando">
+  <input id="explainInput" type="text" placeholder="cole o comando, ex.: rsync -avzP -e ssh /a/ /b/" autocomplete="off" aria-label="Comando para explicar" />
+  <button class="search-btn" type="submit">Explicar</button>
+</form>
+<div id="explainResults" aria-live="polite"></div>
+<section class="help" aria-label="Como funciona">
+  <strong>Como funciona:</strong> cole um comando e cada flag é decomposta com a descrição. O texto vem <em>somente</em> do glossário no <code>Index/</code> — flag não documentada aparece como "não documentado", nunca com texto inventado. Flags curtas agrupadas (<code>-avzP</code>) são expandidas uma a uma.
+</section>
+</section>
+<footer class="footer"><span>Lavinia · Index do segundo cérebro</span><span id="versao">v…</span><span>Vault montado <strong>somente leitura</strong></span></footer>
+<script>
+const qInput = document.getElementById('q');
+const out = document.getElementById('results');
+const totalEl = document.getElementById('total');
+const filesEl = document.getElementById('files');
+let sequence = 0;
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+
+async function doSearch() {
+  const raw = qInput.value.trim();
+  const commandMode = raw.startsWith('/');
+  const query = commandMode ? raw.slice(1) : raw;
+  out.innerHTML = '<div class="result-empty">Buscando…</div>';
+  try {
+    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&mode=${commandMode ? 'cmd' : ''}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    render(await response.json());
+  } catch (error) {
+    out.innerHTML = `<div class="result-empty">Erro na busca (${escapeHtml(error.message)}). Verifique se o serviço está rodando.</div>`;
+    totalEl.textContent = '0';
+    filesEl.textContent = '0';
+  }
+}
+
+function render(data) {
+  const results = data.results || [];
+  const notices = data.notice || [];
+  const groups = groupByFile(results);
+  totalEl.textContent = results.length;
+  filesEl.textContent = groups.length;
+  if (!results.length) {
+    out.innerHTML = `<div class="result-empty">(nada encontrado)</div>`;
+    return;
+  }
+
+  sequence = 0;
+  let html = notices.length ? `<div class="notice">${notices.map(([oldTerm, newTerm]) => `Aproximando <code>${escapeHtml(oldTerm)}</code> para <code>${escapeHtml(newTerm)}</code>`).join(' · ')}</div>` : '';
+  groups.forEach((group, groupIndex) => {
+    const visibleItems = group.items;
+    html += `<article class="group" aria-label="Arquivo ${escapeHtml(group.file)}">
+      <button class="group-header" data-group-toggle data-group-id="group-${groupIndex}" aria-expanded="true" aria-controls="items-${groupIndex}">
+        <span class="group-title">${escapeHtml(group.file)}<span class="group-meta">${group.items.length} resultado${group.items.length === 1 ? '' : 's'}</span></span>
+        <svg class="chevron" open width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div id="items-${groupIndex}" class="items" data-expanded="true">
+        ${visibleItems.map(item => renderItem(item)).join('')}
+      </div>
+    </article>`;
+  });
+  out.innerHTML = html;
+}
+
+function renderItem(item) {
+  sequence += 1;
+  return `<div class="item">
+    <div>
+      <span class="label">#${sequence}${item.label ? ` · ${escapeHtml(item.label)}` : ''}</span>
+      <div class="cmd">${escapeHtml(item.cmd)}</div>
+    </div>
+    ${item.comment ? `<div class="comment"># ${escapeHtml(item.comment)}</div>` : ''}
+    ${item.example && !item.comment ? `<div class="example">ex.: <code>${escapeHtml(item.example)}</code></div>` : ''}
+    <div class="item-footer"><span class="section">${escapeHtml(item.section || '')}</span><button class="copy-btn" data-copy data-command="${escapeHtml(item.cmd)}" aria-label="Copiar comando">📋 Copiar</button></div>
+  </div>`;
+}
+
+function groupByFile(results) {
+  const map = new Map();
+  results.forEach(result => {
+    const file = result.file || 'desconhecido';
+    if (!map.has(file)) map.set(file, {file, items: []});
+    map.get(file).items.push(result);
+  });
+  return [...map.values()];
+}
+
+function toggleGroup(button) {
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  const panel = document.getElementById(button.getAttribute('aria-controls'));
+  button.setAttribute('aria-expanded', String(!expanded));
+  button.querySelector('.chevron').toggleAttribute('open', !expanded);
+  if (panel) { panel.classList.toggle('collapsed', expanded); panel.dataset.expanded = String(!expanded); }
+}
+
+async function copyCommand(button) {
+  const command = button.dataset.command || '';
+  const original = button.innerHTML;
+  let copied = false;
+  if (navigator.clipboard && window.isSecureContext) {
+    try { await navigator.clipboard.writeText(command); copied = true; } catch (_) { copied = false; }
+  }
+  if (!copied) {
+    const textarea = document.createElement('textarea');
+    textarea.value = command;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try { copied = document.execCommand('copy'); } catch (_) { copied = false; }
+    textarea.remove();
+  }
+  button.textContent = copied ? '✓ Copiado' : 'Falha ao copiar';
+  button.classList.toggle('copied', copied);
+  button.classList.toggle('failed', !copied);
+  setTimeout(() => { button.innerHTML = original; button.classList.remove('copied', 'failed'); }, 1400);
+}
+
+document.getElementById('searchForm').addEventListener('submit', event => { event.preventDefault(); doSearch(); });
+out.addEventListener('click', event => {
+  const groupButton = event.target.closest('[data-group-toggle]');
+  if (groupButton) { toggleGroup(groupButton); return; }
+  const copyButton = event.target.closest('[data-copy]');
+  if (copyButton) copyCommand(copyButton);
+});
+
+// --- Abas: Buscar / Entender ---
+const explainOut = document.getElementById('explainResults');
+const explainInput = document.getElementById('explainInput');
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    const active = tab.dataset.tab === name;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+  });
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    panel.classList.toggle('hidden', panel.id !== `tab-${name}`);
+  });
+  localStorage.setItem('aba', name);
+  (name === 'busca' ? qInput : explainInput).focus();
+}
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+async function doExplain() {
+  const cmd = explainInput.value.trim();
+  if (!cmd) { explainOut.innerHTML = '<div class="result-empty">Cole um comando.</div>'; return; }
+  explainOut.innerHTML = '<div class="result-empty">Explicando…</div>';
+  try {
+    const response = await fetch('/api/explicar', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({comando: cmd}),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    renderExplain(await response.json());
+  } catch (error) {
+    explainOut.innerHTML = `<div class="result-empty">Erro (${escapeHtml(error.message)}).</div>`;
+  }
+}
+function renderExplain(data) {
+  if (data.erro || !data.base) {
+    explainOut.innerHTML = `<div class="result-empty">${escapeHtml(data.erro || 'não deu pra interpretar')}</div>`;
+    return;
+  }
+  const partes = (data.partes || []).map(part => `
+    <div class="part ${part.documentado ? '' : 'unknown'}">
+      <span class="flag">${escapeHtml(part.flag)}</span>
+      <span class="desc">${part.documentado ? escapeHtml(part.descricao) : 'não documentado no glossário'}</span>
+    </div>`).join('');
+  const aviso = (data.sem_fonte || []).length
+    ? `<div class="notice">${data.sem_fonte.length} flag(s) sem fonte no glossário: <code>${data.sem_fonte.map(escapeHtml).join('</code>, <code>')}</code>. Não foi inventado texto — consulte o <code>man</code> ou acrescente no <code>Index/glossario-flags.md</code>.</div>`
+    : '';
+  explainOut.innerHTML = `<div class="explain-head">
+      <div class="explain-base">${escapeHtml(data.base)}</div>
+      <div class="explain-orig">${escapeHtml(data.comando)}</div>
+    </div>
+    ${aviso}
+    <div class="parts">${partes || '<div class="result-empty">nenhuma flag para explicar</div>'}</div>`;
+}
+document.getElementById('explainForm').addEventListener('submit', event => { event.preventDefault(); doExplain(); });
+switchTab(localStorage.getItem('aba') || 'busca');
+
+// Versão vem do /api/version — não é hardcoded no HTML, pra não divergir do VERSION.
+fetch('/api/version')
+  .then(response => response.ok ? response.json() : null)
+  .then(data => {
+    if (!data) return;
+    const el = document.getElementById('versao');
+    if (el) el.textContent = `v${data.version} · ${data.commands} comandos · glossário ${data.glossario}`;
+  })
+  .catch(() => {});   // serviço sem /api/version não quebra a página
+</script>
+</body>
+</html>
